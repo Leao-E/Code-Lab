@@ -1,50 +1,74 @@
 const express = require ('express');
+const { uuid } = require ('uuidv4');
 
 const app = express();
 
+const data_collection = [];
+
 app.use (express.json());
 //routes
-app.get('/getTest', (req, res) => {
+app.get('/data', (req, res) => {
   //desetruturando o query
-  let {teste} = req.query;
+  let {id} = req.query;
 
-  return res.json(
-    {
-      msg: `this is a "GET" route`,
-      query: req.query,
-      teste: teste,
-    }
-  );
+  let response = id
+  ? data_collection.filter(data => data.id === id)
+  : data_collection;
+  
+  return res.json(response);
 });
 
-app.post('/postTest', (req, res) => {
-  return res.json(
-    {
-      mgs: `this is a "POST" route`,
-      body: req.body
-    }
-  );
+app.post('/data', (req, res) => {
+  
+  let { info_1, info_2, info_3 } = req.body;
+
+  let data = {
+    id: uuid(),
+    info_1: info_1,
+    info_2: info_2,
+    info_3: info_3,
+  }
+
+  data_collection.push(data);
+
+  return res.json(data);
 });
 
-app.delete('/deleteTest/:id', (req, res) => {
-  return res.json(
-    {
-      msg: `this is a "DELETE" route`,  
-      params: req.params,
-      id: req.params.id,
-    }
-  );
+app.delete('/data/delete/:id', (req, res) => {
+  
+  let { id } = req.params;
+  let dataIndex = data_collection.findIndex(data => data.id === id);
+
+  if (dataIndex < 0){
+    return res.status(400).json({error: `invalid id`});
+  }
+  
+  data_collection.splice(dataIndex, 1);
+
+  return res.status(204).send();
 });
 
-app.put('/putTest/:id', (req, res) => {
-  return res.json(
-    {
-      msg: `this is a "PUT" route`,
-      params: req.params,
-      id: req.params.id,
-      body: req.body
-    }
-  );
+app.put('/data/update/:id', (req, res) => {
+  
+  let { info_1, info_2, info_3 } = req.body;
+  
+  let { id } = req.params;
+  let dataIndex = data_collection.findIndex(data => data.id === id);
+
+  if (dataIndex < 0){
+    return res.status(400).json({error: `invalid id`});
+  }
+
+  let data = {
+    id: id,
+    info_1: info_1,
+    info_2: info_2,
+    info_3: info_3,
+  }
+
+  data_collection [dataIndex] = data;
+
+  return res.json(data);
 });
 
 let port = 3000;
