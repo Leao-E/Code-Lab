@@ -1,9 +1,12 @@
 # Code-Lab
 
-###### Welcome to my test repository! All the codes that I make when learning a new technology are in this repository.
+### Welcome to my test repository! All the codes that I make when learning a new technology are in this repository.
+
+#### Let's code
 
 Source Tree:
 
-* NodeJS:
-  * A simple project just to test NodeJS
-  * It uses Express to create routes
+&#8594; NodeJS:
+    
+* Description:    
+    Just a simple project using NodeJS and Express.
