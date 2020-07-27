@@ -1,13 +1,40 @@
 const express = require ('express');
-const { uuid } = require ('uuidv4');
+const { uuid, isUuid } = require ('uuidv4');
 
 const app = express();
 
 const data_collection = [];
 
+//middlewares
+function logRequests(req, res, next){
+  console.log(`${req.method}: ${req.hostname}${req.url} `);
+  return next();
+}
+
+function logTime (req, res, next){
+  let strTime;
+  console.time(strTime);
+  next();
+  //you can run code after the 
+  //execution of "next()"
+  console.timeEnd(strTime);
+}
+function validateDataId(req, res, next){
+  let { id } = req.params;
+  console.log('e');
+  if (!isUuid(id)){
+    return res.status(400).json({error: `invalide id`});
+  }
+  return next();
+}
+//declaring middleware as a global middleware
 app.use (express.json());
+app.use(logRequests); 
+//route group
+app.use('/data/update/', validateDataId);
 //routes
-app.get('/data', (req, res) => {
+//in app.get we are using logTime as a route middleware
+app.get('/data', logTime, (req, res) => {
   //desetruturando o query
   let {id} = req.query;
 
